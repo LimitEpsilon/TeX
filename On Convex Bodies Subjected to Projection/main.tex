@@ -1,0 +1,152 @@
+\documentclass[a4paper]{article}
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{amssymb}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{amsthm}
+\newtheorem{thm}{Theorem}[subsection]
+\newtheorem{lem}{Lemma}[subsection]
+\newtheorem{cor}{Corollary}[subsection]
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[subsection]
+\newtheorem{rem}{Remark}[subsection]
+
+\title{On Convex Bodies Subjected to Projection}
+\author{Joonhyup Lee}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In this paper, we prove two lemmas; that each line passing through the interior of a convex body meets the boundary at exactly two points, and that the projection of the interior of the convex body is equal to the interior of the projection. These lemmas imply the fact that each point in the interior of the projection can be "covered" via the projection map by exactly two points of the boundary. We apply this in the case of a convex polytope $S$ in $\mathbb{R}^n$ to show that $\mathrm{Vol}\pi(S)=\frac{1}{2}\sum\limits_{i=1}^m \mathrm{Vol}\pi(F_i)$ , when $\pi$ is the projection map and $F_i (i=1, \cdots ,m)$ being the facets of the polytope with $m$ facets.
+\end{abstract}
+
+
+
+\section{Introduction}
+
+ In the mathematical curriculum of South Korea, students are required to study about the projection of planar figures to planes. There exists, however, communities in the Internet
+ that extend this problem further to the projection of solids, such as the cube. This paper aims to generalize this situation further, to give a formula that allows one to calculate the projected volume of a convex polytope onto a hyperplane in $\mathbb{R}^n$.
+
+We first check that for the line which is parallel to the normal vector of the hyperplane and passing through a point in the interior of the projection of the polytope $S$, the intersection with the boundary must only contain two points. Intuitively, this means that every point in the interior of the projection is covered by the facets of $S$. This leads to the formula $\mathrm{Vol}\mathrm{Int}\pi(S)=\mathrm{Vol}\pi(S)=\frac{1}{2}\sum\limits_{i=1}^m \mathrm{Vol}\pi(F_i)$ , when $\pi$ is the projection map and $F_i (i=1, \cdots ,m)$ being the facets of the polytope with $m$ facets.
+
+This result was already found out by Burger, Gritzmann, and Klee \footnote{T. Burger, P. Gritzmann, V. Klee. Polytope Projection and Projection Polytopes. \textit{Amer. Math. Monthly} \textbf{103} no. 9 (1996) 742--755.}, and their proof utilized Minkowski's theorem of exterior scaled normal vectors. Their proof appeals to a logic which is intuitively obvious. In their paper, they divide the facets of the polytope into ones that are "visible" from the hyperplane and ones that are not visible, and claim that each of the group projects in a one to one manner onto the whole projection. In this paper, we put this logic on a more rigorous basis, by proving results applying not only for convex polytopes but for $\textit{convex bodies}$; convex and compact sets with nonempty interior. The techniques used are elementary; it uses only the definitions of interior and convex.
+
+\section{Main results}
+\subsection{Definitions}
+\begin{defn} Let a set which is convex and compact with nonempty interior in $\mathbb{R}^n$ be called a $convex$ $ body$ in $\mathbb{R}^n$.
+\end{defn}
+\begin{defn} Let $B_{V,\varepsilon} (P):= \{X\in V \,|\, \|X-P \| < \varepsilon\}$ be an $open$ $ball$ $centered$ $at$ $P$ $with$ $radius$ $\varepsilon$ in a finite dimensional inner product space $V$, when $\|\cdot\|$ is the natural norm defined on $V$.
+\end{defn}
+\begin{defn}For a set $S$ defined in a finite dimensional inner product space $V$,
+\newline
+let $\mathrm{Int}S := \{X\in V\,|\,B_{V, \varepsilon}(X) \subseteq S$, for some $\varepsilon>0\}$ be the $interior$ of $S$.
+\end{defn}
+\begin{defn}Let $\partial S:=\overbar{S} \setminus \mathrm{Int}S$ be the $boundary$ of a set $S$.
+\end{defn}
+\begin{defn} For a set $S$ in $\mathbb{R}^n$, let $\mathrm{conv}S:=\{\sum_{X\in S}t_XX\in\mathbb{R}^n|\sum_{X\in S}t_X=1,t_X\ge0\}$ be the $convex$ $hull$ of $S$.
+\end{defn}
+\begin{defn}
+For a finite set $S$ in $\mathbb{R}^n$, if $\mathrm{conv}S$ has a nonempty interior, it is called a $convex$ $ polytope$ in $\mathbb{R}^n$. 
+\end{defn}
+\begin{defn} A hyperplane $H:=\{X\in\mathbb{R}^n|X\boldsymbol{\cdot}\boldsymbol{\mathrm{n}}=\alpha\}$ for some $\alpha\in\mathbb{R}$ and $\boldsymbol{\mathrm{n}}\in\mathbb{R}^n$ is called the $supporting$ $hyperplane$ of a convex set $S(\subseteq\mathbb{R}^n)$, if it satisfies $H\cap\overbar{S}\not=\varnothing$ and either $X\boldsymbol{\cdot}\boldsymbol{\mathrm{n}}\ge\alpha$ or $X\boldsymbol{\cdot}\boldsymbol{\mathrm{n}}\le\alpha$, for all $X$ in $S$.
+\end{defn}
+\begin{defn} For a convex polytope $S$ in $\mathbb{R}^n$, the intersection between $S$ and a supporting hyperplane of $S$ is called a $face$ of $S$. Especially, a face that is $(n-1)$$-$dimensional is called a $facet$.
+\end{defn}
+\subsection{Intersection between a line and a convex compact set}
+
+\begin{lem} For two points $O=(0,\cdots ,0)$ and $A=(a,0,...,0)(a>0)$ in $\mathbb{R}^n$ and a positive number $\varepsilon$, we define $D:=\{tX+(1-t)A \in\mathbb{R}^n|\, X\in \overbar{B_{\mathbb{R}^n,\frac{\varepsilon}{2}}(O)}\cap\{X\in \mathbb{R}^n\,|\,A\boldsymbol{\cdot}X=0\},t\in[0,1]\}$, $E:=\{(x_1,x_2,\cdots,x_n)\in \mathbb{R}^n|\sum\limits_{i=2}^n x_i^2 \le\frac{\varepsilon^2}{4a^2}(a-x_1)^2,x_1 \in [0,a]\}$. Then it holds that $D=E$.
+\end{lem}
+
+\begin{lem} For a positive number $\varepsilon$ and two points  $A=(a,0,\cdots,0)(a>0)$ and $P=(p,0,\cdots,0)$ $(0<p<a)$ in $\mathbb{R}^n$, the following holds: for $\varepsilon_1:=\textrm{min}\{p,\frac{1}{\frac{2a}{\varepsilon}+1}(a-p)\}$, $\overbar{B_{\mathbb{R}^n, \varepsilon_1}(P)}\subseteq\{(x_1,x_2,\cdots,x_n)\in\mathbb{R}^n|\sum\limits_{i=2}^n x_i^2 \le\frac{\varepsilon^2}{4a^2}(a-x_1)^2,x_1 \in [0,a]\}$
+\end{lem}
+\begin{lem} A convex and compact subset of a line in $\mathbb{R}^n$ is either a segment or a point.
+\end{lem}
+
+\begin{thm} For a convex and compact set $S$ in $\mathbb{R}^n$ and a line $l$ that satisfies $|S \cap l| \not= 0$, either $S \cap l \subseteq \partial S$ or $|l \cap \partial S|=2$.
+\end{thm}
+
+\subsection{Projection of the interior and interior of the projection}
+
+\begin{lem} Let $S$ be a convex body in $\mathbb{R}^n$, and let $\pi:\mathbb{R}^n \rightarrow \boldsymbol{\mathrm{n}}^{\perp}$ map $X$ to $X-\frac{\boldsymbol{\mathrm{n}}\boldsymbol{\cdot}X}{\boldsymbol{\mathrm{n}}\boldsymbol{\cdot}\boldsymbol{\mathrm{n}}}\boldsymbol{\mathrm{n}}$
+$(\boldsymbol{\mathrm{n}}\not=\boldsymbol{\mathrm{0}})$, which is a projection map onto the hyperplane $\boldsymbol{\mathrm{n}}^{\perp}:=\{X\in\mathbb{R}^n|\boldsymbol{\mathrm{n}}\boldsymbol{\cdot}X=0\}$ for some $\boldsymbol{\mathrm{n}}\in\mathbb{R}^n$. If $P\in \mathrm{Int}\pi(S)$, then $|\pi^{-1}(P)\cap S|>1$
+\end{lem}
+\begin{lem}Let $S$ be a convex body in $\mathbb{R}^n$ and $S^1 :=\{\boldsymbol{\mathrm{v}}\in\mathbb{R}^n|\|\boldsymbol{\mathrm{v}}\|=1\}$. For a point $P\in S$, we define a function $g_P:S^1\rightarrow\mathbb{R}$, by $g_P(\boldsymbol{\mathrm{v}})=\mathrm{sup}\{\|X-P\||X\in (P+t\boldsymbol{\mathrm{v}})\cap S,t\ge0\}$. If $P\in\partial S$, there exists a $\boldsymbol{\mathrm{v}}\in S^1$ that satisfies $g_P(\boldsymbol{\mathrm{v}})=0$.
+\end{lem}
+
+We will be using the contrapositive of this lemma; if $ g_P(\boldsymbol{\mathrm{v}})\not=0$(i.e. $g_P(\boldsymbol{\mathrm{v}})>0$) for all $\boldsymbol{\mathrm{v}}\in S^1$, then $P\notin \partial S$(i.e. $P\in\mathrm{Int}S$).
+
+\begin{thm} Defining the functions $\pi$ and $g_P$ and the set $S$ as in Lemma 2.3.1. and Lemma 2.3.2. respectively, it holds that $\pi(\mathrm{Int}S)=\mathrm{Int}\pi(S)$.
+\begin{proof}
+\begin{flushleft} ($\pi(\mathrm{Int}S)\subseteq\mathrm{Int}\pi(S)$)\end{flushleft}
+$P\in\mathrm{Int}S\Leftrightarrow$There exists $\varepsilon>0$ such that $B_{\mathbb{R}^n,\varepsilon}(P)\subseteq S$. Since $\pi(B_{\mathbb{R}^n,\varepsilon}(P))=B_{\boldsymbol{\mathrm{n}}^{\perp},\varepsilon}(\pi(P))\subseteq \pi(S)$, we showed that $\pi(P)\in\mathrm{Int}\pi(S)$.
+\begin{flushleft} ($\mathrm{Int}\pi(S)\subseteq \pi(\mathrm{Int}S)$)\end{flushleft}
+Choose any point $P$ in $\mathrm{Int}\pi(S)$. Then there exists a positive number $\varepsilon$ that satisfies $\overbar{B_{\boldsymbol{\mathrm{n}}^{\perp},\varepsilon}(P)}\subseteq \pi(S)$. In a similar fashion to Lemma 2.3.1, we create an orthonormal basis with $\boldsymbol{\mathrm{v}}_n:=\frac{\boldsymbol{\mathrm{n}}}{\|\boldsymbol{\mathrm{n}}\|}$ inside it in $\mathbb{R}^n$. Since $P$ is on the hyperplane $\boldsymbol{\mathrm{n}}^{\perp}$, the coordinate of $P$ in relevance to the orthonormal basis that has $\boldsymbol{\mathrm{v}}_n$ as its $n^{th}$ vector must be expressed as $P(p_1,\cdots,p_{n-1},0)$.
+Since $\overbar{B_{\boldsymbol{\mathrm{n}}^{\perp},\varepsilon}(P)}\subseteq \pi(S)$, $P+(x_1,\cdots,x_{n-1},0)\in \pi(S)$ for all $x_1,\cdots,x_{n-1}$ such that $\sum\limits_{i=1}^{n-1} x_i^2=\varepsilon^2$. This means that for all $x_1,\cdots,x_{n-1}$ such that $\sum\limits_{i=1}^{n-1} x_i^2=\varepsilon^2$, there exists a f$h$ such that $P+(x_1,\cdots,x_{n-1},h)\in S.$
+
+Now, we see $\pi^{-1}(P)\cap S$, which we already know is $\overbar{AB}$, for some $A,B\in\partial S$ by Lemma 2.2.3. and Lemma 2.3.1. Without losing generality, we put $A=P+(0,\cdots,0,a)$, $B=P+(0,\cdots,0,b)$ for some real numbers $a,b(a<b)$. We are going to show that $\frac{A+B}{2}=P+(0,\cdots,0,\frac{a+b}{2})$ is in the interior of $S$(i.e. $P=\pi(\frac{A+B}{2})\in \pi(\mathrm{Int}S)$) by using Lemma 2.3.2, that $g_{\frac{A+B}{2}}(\boldsymbol{\mathrm{v}})>0$ for all $\boldsymbol{\mathrm{v}}\in S^1$.
+
+\begin{flushleft}(i) $\boldsymbol{\mathrm{v}}=(v_1,\cdots,v_n)$, $v_1^2+\cdots+v_{n-1}^2\not=0$\end{flushleft}
+Define $\boldsymbol{\mathrm{y}}:=\frac{\varepsilon}{\sqrt[]{v_1^2+\cdots+v_{n-1}^2}}\boldsymbol{\mathrm{v}}$. Then the $i^{th}$ coordinate of $\boldsymbol{\mathrm{y}}$, defined as $y_i(i=1,\cdots,n)$ equals $\frac{\varepsilon}{\sqrt[]{v_1^2+\cdots+v_{n-1}^2}}v_i$, leading to the fact that $y_1^2+\cdots+y_{n-1}^2=\varepsilon^2$. Since we already know that for all $  x_1,\cdots,x_{n-1}$ such that $\sum\limits_{i=1}^{n-1} x_i^2=\varepsilon^2$, there exists a real number $h$ such that $P+(x_1,\cdots,x_{n-1},h)\in S$, we know that there exists a point $Q=P+(y_1,\cdots,y_{n-1},h)$ that is in $S$. Since $S$ is convex, $\bigtriangleup ABQ\subseteq S$. Also, since $A=P+(0,\cdots,0,a)$, $B=P+(0,\cdots,0,b)$, $Q=P+(y_1,\cdots,y_{n-1},h)$, the vector $\boldsymbol{\mathrm{v}}=\frac{\sqrt[]{v_1^2+\cdots+v_{n-1}^2}}{\varepsilon}(y_1,\cdots,y_n)$, which is a linear combination of $(y_1,\cdots,y_{n-1},0)$ and $(0,\cdots,0,1)$ lies upon the plane $ABQ$, which is the span of those two vectors translated by $P$. Also, since the dot product between $Q-\frac{A+B}{2}$ and $(y_1,\cdots,y_{n-1}, 0)$, which is the vector perpendicular to $\overbar{AB}$ in the plane $ABQ$ is positive, $Q-\frac{A+B}{2}$ and $(y_1,\cdots,y_{n-1}, 0)$ point to the same side of the plane that is divided by $\overleftrightarrow{AB}$. This is why the dot product of $\boldsymbol{\mathrm{v}}$ and $(y_1,\cdots,y_{n-1}, 0)$ being positive means that $\boldsymbol{\mathrm{v}}$ and $Q-\frac{A+B}{2}$ also point to the same side, leading to the fact that $\frac{A+B}{2}+t\boldsymbol{\mathrm{v}}(t\ge0)$ must pass through the interior of $\bigtriangleup ABQ$. This means that there exists an $t_1>0$ such that $\frac{A+B}{2}+t_1\boldsymbol{\mathrm{v}}\in \{\frac{A+B}{2}+t\boldsymbol{\mathrm{v}}\in\mathbb{R}^n|t\ge0\}\cap\bigtriangleup ABQ\subseteq \{\frac{A+B}{2}+t\boldsymbol{\mathrm{v}}\in\mathbb{R}^n|t\ge0\}\cap S$, leading to the conclusion that $g_{\frac{A+B}{2}}(\boldsymbol{\mathrm{v}})>0$.
+
+
+\begin{flushleft}(ii) $\boldsymbol{\mathrm{v}}=(v_1,\cdots,v_n)$, $v_1^2+\cdots+v_{n-1}^2=0$
+
+Then, either $\boldsymbol{\mathrm{v}}=(0,\cdots,0,1)$ or $\boldsymbol{\mathrm{v}}=(0,\cdots,0,-1)$. Either direction produces the result that $g_{\frac{A+B}{2}}(\boldsymbol{\mathrm{v}})=\frac{\overbar{AB}}{2}>0$.
+\end{flushleft}
+Therefore, for all $ \boldsymbol{\mathrm{v}}\in S^1,g_{\frac{A+B}{2}}(\boldsymbol{\mathrm{v}})>0$, leading to the fact that $P=\pi(\frac{A+B}{2})\in \pi(\mathrm{Int}S)$.
+\end{proof}
+\end{thm}
+\subsection{The case with convex polytopes}
+
+\begin{lem} For a convex polytope $S$ in $\mathbb{R}^n$, the interior of the facets are mutually disjoint.
+\end{lem}
+\begin{thm} Let $S$ be a convex body in $\mathbb{R}^n$, and $\pi$ project a point to the hyperplane $\boldsymbol{\mathrm{n}}^{\perp}$ for a nonzero $\boldsymbol{\mathrm{n}}\in\mathbb{R}^n$. If there exists a finite set $I$ such that $(\bigcup_{i\in I}F_i)\cup Q=\partial S$, for some convex $F_i(i\in I)$ and $Q$ with $\mathrm{Vol}\pi(Q)=0$, which are mutually disjoint, $\mathrm{Vol}\pi(S)=\frac{1}{2}\sum_{i\in I} \mathrm{Vol}\pi(F_i)$.
+\begin{proof}
+We already know that\begin{equation}\begin{aligned}\int_{\pi(\mathrm{Int}S)}|\pi^{-1}(X)\cap\partial S|=\int_{\pi(\mathrm{Int}S)}2
+=\int_{\mathrm{Int}\pi(S)}2
+=2\mathrm{Vol}\mathrm{Int}\pi(S)
+=2\mathrm{Vol}\pi(S)\end{aligned}\end{equation} We want to show that $\int_{\pi(\mathrm{Int}S)}|\pi^{-1}(X)\cap\partial S|=\sum_{i\in I} \mathrm{Vol}\pi(F_i)$. Since $(\bigcup_{i\in I}F_i)\cup Q=\partial S$, \begin{equation}\begin{aligned}\int_{\pi(\mathrm{Int}S)}|\pi^{-1}(X)\cap\partial S|&=\int_{\pi(\mathrm{Int}S)}|\pi^{-1}(X)\cap((\bigcup_{i\in I}F_i)\cup Q)|\\
+&=\int_{\pi(\mathrm{Int}S)}|\bigcup_{i\in I}(F_i\cap \pi^{-1}(X))\cup (Q\cap \pi^{-1}(X))|\end{aligned}\end{equation} Because each of the $F_i\cap \pi^{-1}(X)$ and $Q\cap \pi^{-1}(X)$ are disjoint, by the rule of sum, this changes to \begin{equation}\int_{\pi(\mathrm{Int}S)}(\sum_{i\in I}|F_i\cap \pi^{-1}(X)|+ |Q\cap \pi^{-1}(X)|)\end{equation} 
+
+For $\int_{\pi(\mathrm{Int}S)}|Q\cap \pi^{-1}(X)|$,\begin{equation}\begin{aligned}\int_{\pi(\mathrm{Int}S)}|Q\cap \pi^{-1}(X))|&=\int_{\pi(\mathrm{Int}S)\cap \pi(Q)}|Q\cap \pi^{-1}(X))|
+\le\int_{\pi(\mathrm{Int}S)\cap \pi(Q)}2
+\le\int_{\pi(Q)}2
+=2\mathrm{Vol}\pi(Q)=0\end{aligned}\end{equation} means that $\int_{\pi(\mathrm{Int}S)}|Q\cap \pi^{-1}(X))|=0$. Therefore \begin{equation}\int_{\pi(\mathrm{Int}S)}(\sum_{i\in I}|F_i\cap \pi^{-1}(X)|+ |Q\cap \pi^{-1}(X))|)=\int_{\pi(\mathrm{Int}S)}\sum_{i\in I}|F_i\cap \pi^{-1}(X)|\end{equation}
+
+Now we need to see the equation \begin{equation} \int_{\pi(\mathrm{Int}S)}\sum_{i\in I}|F_i\cap \pi^{-1}(X)|=\sum_{i\in I}\int_{\pi(\mathrm{Int}S)}|F_i\cap \pi^{-1}(X)|=\sum_{i\in I}\int_{\pi(\mathrm{Int}S)\cap \pi(F_i)}|F_i\cap \pi^{-1}(X)| \end{equation} We want to show that $\int_{\pi(\mathrm{Int}S)\cap \pi(F_i)}|F_i\cap \pi^{-1}(X)|=Vol\pi(F_i)$, for our conclusion.
+
+If $\pi(\mathrm{Int}S)\cap \pi(F_i)=\varnothing$, then $\int_{\pi(\mathrm{Int}S)\cap \pi(F_i)}|F_i\cap \pi^{-1}(X)|=0$. Since 
+\begin{equation}\begin{aligned}\mathrm{Vol}\pi(F_i) &=\mathrm{Vol}(\pi(F_i)\cap \pi(S))=\mathrm{Vol}(\pi(F_i)\cap (\mathrm{Int}\pi(S)\cup\partial \pi(S)))\\&=\mathrm{Vol}(\pi(F_i)\cap\mathrm{Int}\pi(S))+\mathrm{Vol}(\pi(F_i)\cap\partial \pi(S))\\
+&=\mathrm{Vol}\varnothing +\mathrm{Vol}(\pi(F_i)\cap\partial \pi(S))=\mathrm{Vol}(\pi(F_i)\cap\partial \pi(S))\le \mathrm{Vol}\partial \pi(S)=0\end{aligned}\end{equation} $\int_{\pi(\mathrm{Int}S)\cap \pi(F_i)}|F_i\cap \pi^{-1}(X)|=\mathrm{Vol}\pi(F_i)=0$
+
+If $\pi(\mathrm{Int}S)\cap \pi(F_i)$ is nonempty, we can prove that for any $P$ in $\pi(\mathrm{Int}S)\cap \pi(F_i)$, $|F_i\cap \pi^{-1}(P)|=1$. This is because $1\le|F_i\cap \pi^{-1}(P)|\le|\partial S\cap \pi^{-1}(P)|=2$, and if $|F_i\cap \pi^{-1}(P)|=2$, then it goes against convexity. More explicitly $F_i\cap \pi^{-1}(P)$ must be convex, and a set consisted of two disjoint points is not convex, meaning that we reached a contradiction. Then \begin{equation}\begin{aligned}\int_{\pi(\mathrm{Int}S)\cap \pi(F_i)}|F_i\cap \pi^{-1}(X)| 
+&= \int_{\pi(\mathrm{Int}S)\cap \pi(F_i)}1=\mathrm{Vol}(\pi(\mathrm{Int}S)\cap \pi(F_i))\\ 
+&= \mathrm{Vol}(\mathrm{Int}\pi(S)\cap \pi(F_i))= \mathrm{Vol}((\pi(S)\setminus\partial \pi(S))\cap \pi(F_i))\\ 
+&= \mathrm{Vol}(\pi(S)\cap \pi(F_i))-\mathrm{Vol}(\partial \pi(S)\cap \pi(F_i))= \mathrm{Vol}(\pi(S)\cap \pi(F_i))\\
+&= \mathrm{Vol}\pi(S)\end{aligned}\end{equation}
+
+In either case, we have proved that $\int_{\pi(\mathrm{Int}S)\cap \pi(F_i)}|F_i\cap \pi^{-1}(X)|=\mathrm{Vol}\pi(F_i)$. Therefore, \begin{equation}\sum_{i\in I}\int_{\pi(\mathrm{Int}S)\cap \pi(F_i)}|F_i\cap \pi^{-1}(X)|=\sum_{i\in I}\mathrm{Vol}\pi(F_i)\end{equation} This means that \begin{equation}\int_{\pi(\mathrm{Int}S)}|\pi^{-1}(X)\cap\partial S|=\sum_{i\in I}\int_{\pi(\mathrm{Int}S)\cap \pi(F_i)}|F_i\cap \pi^{-1}(X)|=\sum_{i\in I} \mathrm{Vol}\pi(F_i)\end{equation} which is what this theorem claims to be true.
+\end{proof}
+\end{thm}
+\begin{cor} Let $S\subset\mathbb{R}^n$ be a convex polytope with $m$ facets $F_1,F_2,\cdots,F_m$. Then, $\mathrm{Vol}\pi(S)=\frac{1}{2}\sum\limits_{i=1}^m \mathrm{Vol}\pi(F_i)$.
+\begin{proof}
+Let $F^\prime _i:=\mathrm{Int}F_i(i=1,2,\cdots,m)$, and let $Q:=\bigcup\limits_{i=1}^{m}\partial F_i$. Then, $F^\prime_i$ are convex, because they are the interior of facets, and are mutually disjoint by Lemma 2.4.1. Also, $\mathrm{Vol}\pi Q=0$, as explained in the start of this section, and $Q$ is mutually disjoint to $F_i$, because of the definition of a boundary. Since $\partial S=\bigcup\limits_{i=1}^{m}F_i =(\bigcup\limits_{i=1}^{m}F^{\prime}_i )\cup Q$,  $\mathrm{Vol}\pi(S)=\frac{1}{2}\sum\limits_{i=1}^m \mathrm{Vol}\pi(F^\prime_i)$ by Theorem 2.4.1. 
+
+Since $F^\prime_i\subseteq F_i\subseteq F^\prime_i\cup Q$, $\pi(F^\prime_i)\subseteq\pi(F_i)\subseteq \pi(F_i\cup Q)=\pi(F^\prime_i)\cup\pi(Q)$. Therefore, $\mathrm{Vol}\pi(F^\prime_i)\le\mathrm{Vol}\pi(F_i)\le\mathrm{Vol}(\pi(F^\prime_i)\cup\pi(Q))\le\mathrm{Vol}\pi(F^\prime_i)+\mathrm{Vol}\pi(Q)=\mathrm{Vol}\pi(F^\prime_i)$. This means that $\mathrm{Vol}\pi(F^\prime_i)=\mathrm{Vol}\pi(F_i)$. This leads to the conclusion that $\mathrm{Vol}\pi(S)=\frac{1}{2}\sum\limits_{i=1}^m \mathrm{Vol}\pi(F^\prime_i)=\frac{1}{2}\sum\limits_{i=1}^m \mathrm{Vol}\pi(F_i)$.
+\end{proof}
+\end{cor}
+
+\end{document}
