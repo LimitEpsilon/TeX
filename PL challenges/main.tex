@@ -1,0 +1,376 @@
+\documentclass{article}
+\usepackage{geometry}
+\geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=20mm,
+ }
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{kotex}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{ebproof}
+\usepackage{fancyvrb}
+\usepackage{biblatex}
+\usepackage{csquotes}
+\newtheorem{clm}{Claim}[section]
+\addbibresource{citations.bib}
+\title{SNU 4190.310 Programming Languages Challenges (2022-S)}
+\author{서울대학교 전기$\cdot$정보공학부 2018-12602 이준협}
+\date{}
+\begin{document}
+\maketitle
+\section{Problem 1: Progress \& Preservation for a simple type system}
+
+\begin{align}
+    e ::= \: &n & \mathsf{integer} \nonumber\\
+      | \: &x & \mathsf{variable} \nonumber\\
+      | \: &\lambda x.e & \mathsf{function} \nonumber\\
+      | \: &e \: e & \mathsf{application} \nonumber\\
+      | \: &e + e & \mathsf{addition} \nonumber
+\end{align}
+
+\begin{center}
+\begin{prooftree}
+    \hypo {\:}
+    \infer 1 {\Gamma \vdash n : \iota}
+\end{prooftree}\textsf{    Integer    }
+\begin{prooftree}
+    \hypo {\:}
+    \infer 1 [$\Gamma (x) = \tau$] {\Gamma \vdash x : \tau}
+\end{prooftree}\textsf{    Variable    }
+\begin{prooftree}
+    \hypo {\Gamma + x : \tau_1 \vdash e : \tau_2}
+    \infer 1 {\Gamma \vdash \lambda x.e : \tau_1 \rightarrow \tau_2}
+\end{prooftree}\textsf{    Function    }\\
+$\:$\\
+\begin{prooftree}
+    \hypo {\Gamma \vdash e_1 : \tau' \rightarrow \tau}
+    \hypo {\Gamma \vdash e_2 : \tau'}
+    \infer 2 {\Gamma \vdash e_1 \: e_2 : \tau}
+\end{prooftree}\textsf{    Application    }
+\begin{prooftree}
+    \hypo {\Gamma \vdash e_1 : \iota}
+    \hypo {\Gamma \vdash e_2 : \iota}
+    \infer 2 {\Gamma \vdash e_1 + e_2 : \iota}
+\end{prooftree}\textsf{    Addition}
+\end{center}
+
+\begin{clm}$\mathsf{(Progress)}$
+If $e \neq n,\:x,\:\lambda x.e$ (if $e$ can go one step further), $\vdash e : \tau \Rightarrow e \rightarrow e'$.
+\end{clm}
+\begin{proof}
+We use induction on the inference steps of $\vdash e: \tau$.
+\begin{description}
+\item[Case 1.] $e = e_1 \: e_2$
+
+According to the type inference rules, $\vdash e : \tau \Leftrightarrow \: [\vdash e_1 : \tau' \rightarrow \tau] \:\wedge\: [\vdash e_2 : \tau']$.
+
+(Base case) If $e_1$ and $e_2$ are both values, the only values satisfying $\vdash e_1 : \tau' \rightarrow \tau$ are $e_1 = \lambda x.e$ and $e_2 = v$. So $e$ progresses to $\{v/x\}e$ by definition.
+    
+(Inductive assumption) Else, when either $e_1$ or $e_2$ is not a value, by the inductive assumption either $e_1 \rightarrow e_1'$ or $e_2 \rightarrow e_2'$, so $e$ progresses either to $e_1' \: e_2$ or $e_1 \: e_2'$.
+
+\item[Case 2.] $e = e_1 + e_2$
+
+According to the type inference rules, $\tau$ must be $\iota$, and $\vdash e : \iota \Leftrightarrow \: [\vdash e_1 : \iota] \:\wedge\: [\vdash e_2 : \iota]$.
+
+(Base case) If $e_1$ and $e_2$ are both values, the only values satisfying $\vdash e_1 : \iota$ and $\vdash e_2 : \iota$ are $e_1 = n_1$ and $e_2 = n_2$. So $e$ progresses to $(n_1 + n_2)$ by definition.
+
+(Inductive assumption) Else, when either $e_1$ or $e_2$ is not a value, by the inductive assumption either $e_1 \rightarrow e_1'$ or $e_2 \rightarrow e_2'$, so $e$ progresses either to $e_1' + e_2$ or $e_1 + e_2'$.
+\end{description}
+\end{proof}
+
+\begin{clm}$\mathsf{(Preservation \: under \: substitution)}$
+$[\Gamma \vdash v : \tau'] \:\wedge\: [\Gamma + x : \tau' \vdash e : \tau] \Rightarrow\: \Gamma \vdash \{v/x\}e : \tau$
+\end{clm}
+\begin{proof}
+We use induction on the inference steps of $\Gamma + x : \tau' \vdash e : \tau$.
+\begin{description}
+
+\item[Case 1.] (Base case) $e=n$
+
+According to the type inference rules, $\tau = \iota$, and since $e=\{v/x\}e$, the claim holds.
+
+\item[Case 2.] (Base case) $e=y$
+
+According to the type inference rules, $\tau = (\Gamma + x : \tau')(y)$.
+
+If $x=y$, then $\tau=(\Gamma + x : \tau')(y)=\tau'$ and $\{v/x\}e = v$, so $\Gamma \vdash [\{v/x\}e = v] : [\tau=\tau']$ holds. 
+
+If $x \neq y$, then $\tau = (\Gamma + x : \tau')(y) = \Gamma(y)$ and $\{v/x\}e = y$, so $\Gamma \vdash [\{v/x\}e = y] : [\tau = \Gamma(y)]$ holds.
+
+\item[Case 3.] $e = \lambda y.e'$ (we can always assume $y \notin FV(v) \cup \{x\}$ by $\alpha$-reduction)
+
+According to the type inference rules, $\tau = \tau_1 \rightarrow \tau_2$, when $(\Gamma + x : \tau' + y : \tau_1) \vdash e' : \tau_2$.
+
+When we let $\Gamma' = \Gamma + y : \tau_1$, we have : $\Gamma' + x : \tau' \vdash e' : \tau_2$. By the inductive assumption, since $\Gamma' + x : \tau' \vdash e' : \tau_2$ has one less inference step and $\Gamma' = \Gamma + y : \tau_1 \vdash v : \tau'$, we have : $\Gamma + y : \tau_1 \vdash \{v/x\}e' : \tau_2$. Thus, we have : $\Gamma \vdash \lambda y.\{v/x\}e' : \tau_1 \rightarrow \tau_2$. Since $\{v/x\}\lambda y.e' = \lambda y.\{v/x\}e'$, we finally have : $\Gamma \vdash \{v/x\}\lambda y.e' : \tau$.
+
+\item[Case 4.] $e = e_1 \: e_2$
+
+According to the type inference rules, $\Gamma + x : \tau' \vdash e_1 : \tau'' \rightarrow \tau \:\wedge\: \Gamma + x : \tau' \vdash e_2 : \tau''$ for some $\tau''$.
+
+Since each reduction step for $e_1$ and $e_2$ has one less step compared to $e$, by the inductive assumption we have : $\Gamma \vdash \{v/x\}e_1 : \tau'' \rightarrow \tau$ and $\Gamma \vdash \{v/x\}e_2 : \tau''$. Thus we can conclude that : $\Gamma \vdash \{v/x\}(e_1 \: e_2) = (\{v/x\}e_1) (\{v/x\}e_2) : \tau$ by the type inference rules.
+
+\item[Case 5.] $e = e_1 + e_2$
+
+According to the type inference rules, $\tau = \iota$ and $\Gamma + x : \tau' \vdash e_1 : \iota$ and $\Gamma + x : \tau' \vdash e_2 : \iota$.
+
+Since each reduction step for $e_1$ and $e_2$ has one less step compared to $e$, by the inductive assumption we have : $\Gamma \vdash \{v/x\}e_1 : \iota$ and $\Gamma \vdash \{v/x\}e_2 : \iota$. Thus we can conclude that : $\Gamma \vdash \{v/x\}(e_1 + e_2) = (\{v/x\}e_1) +(\{v/x\}e_2) : \iota$ by the type inference rules.
+
+\end{description}
+\end{proof}
+
+\begin{clm}$\mathsf{(Preservation)}$
+$[\vdash e : \tau] \:\wedge\: [e \rightarrow e'] \Rightarrow\: \vdash e' : \tau$
+\end{clm}
+\begin{proof}
+We use induction on the inference steps of $\vdash e: \tau$. Note that $e \neq n,\: x,\: \lambda x.e$ for it to have progressed.
+\begin{description}
+\item[Case 1.] $e = e_1 \: e_2$
+
+According to the type inference rules, $\vdash e : \tau \Leftrightarrow \: [\vdash e_1 : \tau' \rightarrow \tau] \:\wedge\: [\vdash e_2 : \tau']$.
+
+(Base case) If $e_1$ and $e_2$ are both values, for $e$ to progress to $e'$, $e_1 = \lambda x.e''$ and $e_2 = v$. Then the type inference rule can be expanded to $x : \tau' \vdash e'' : \tau'$ and $\vdash v : \tau$. By the above claim (preservation under substitution), $\vdash e' = \{v/x\}e'' : \tau$.
+
+(Inductive assumption) Else, when either $e_1$ or $e_2$ is not a value, for $e$ to have progressed either $e_1 \rightarrow e_1'$ or $e_2 \rightarrow e_2'$. Then by the inductive assumption the substructures retain their types (i.e $\vdash e_1' : \tau' \rightarrow \tau$ or $\vdash e_2' : \tau'$). Thus $e' = e_1' \: e_2$ or $e_1 \: e_2'$ preserves its type.
+
+\item[Case 2.] $e = e_1 + e_2$
+
+According to the type inference rules, $\tau$ must be $\iota$, and $\vdash e : \iota \Leftrightarrow \: [\vdash e_1 : \iota] \:\wedge\: [\vdash e_2 : \iota]$.
+
+(Base case) If $e_1$ and $e_2$ are both values, for $e$ to progress $e_1 = n_1$ and $e_2 = n_2$. Then $e' = (n_1 + n_2)$ is also of type $\iota$.
+
+(Inductive assumption) Else, when either $e_1$ or $e_2$ is not a value, for $e$ to progress either $e_1 \rightarrow e_1'$ or $e_2 \rightarrow e_2'$. Then by the inductive assumption the substructures retain their types as $\iota$, so $e'=e_1' + e_2$ or $e_1 + e_2'$ must also be of type $\iota$.
+\end{description}
+\end{proof}
+
+\section{Problem 2: Sound \& Complete Algorithm $\mathcal{M}$}
+\begin{clm}$\mathsf{(Soundness \: of\:} \mathcal{M}\mathsf{)}$
+$\mathcal{M}(\Gamma, e, \alpha) = S \Rightarrow S\Gamma \vdash e : S\alpha$
+
+That is, if the $\mathcal{M}$ algorithm terminates successfully, it provides a valid solution.
+\end{clm}
+\begin{proof}
+We use structural induction on $e$.
+
+\begin{description}
+\item[Case 1.] (Base case) $e = n$
+
+By the definition of the algorithm, $S = \mathsf{unify}(\iota, \alpha)$, so $S\alpha = S\iota = \iota$. Then $S\Gamma \vdash e : S\alpha = \iota$ holds.
+
+\item[Case 2.] (Base case) $e = x$
+
+By the definition of the algorithm, for $\mathcal{M}(\Gamma, e, \alpha)$ to work $\Gamma(x)$ must be defined and $S = \mathsf{unify}(\Gamma(x), \alpha)$. Thus $S\Gamma(x) = S\alpha$. Then $S\Gamma \vdash e : S\Gamma(x) = S\alpha$ holds by the $\mathsf{Variable}$ type inference rule.
+
+\item[Case 3.] $e = \lambda x.e'$
+
+By the definition of the algorithm, $\mathcal{M}(\Gamma, e, \alpha) = S'S$, when $S = \mathsf{unify}(\alpha, \alpha_1 \rightarrow \alpha_2)$ for new $\alpha_1$ and $\alpha_2$, $S' = \mathcal{M}(S\Gamma + x : S\alpha_1, e', S\alpha_2)$. We want to show that 
+\[S'S\Gamma + x : S'S\alpha_1 \vdash e' : S'S\alpha_2\] so we can infer that $S'S\Gamma \vdash e : (S'S\alpha_1 \rightarrow S'S\alpha_2) = S'S(\alpha_1 \rightarrow \alpha_2) = S'S\alpha$ ($\because S\alpha = S(\alpha_1 \rightarrow \alpha_2)$).
+
+To show this, we note that $S' = \mathcal{M}(S\Gamma + x : S\alpha_1, e', S\alpha_2)$. By the inductive assumption, $S'(S\Gamma + x : S\alpha_1) \vdash e' : S'(S\alpha_2)$. This is equivalent to the above statement.
+
+\item[Case 4.] $e = e_1 \: e_2$
+
+By the definition of the algorithm, $\mathcal{M}(\Gamma, e, \alpha) = S'S$, when $S = \mathcal{M}(\Gamma, e_1, \alpha'\rightarrow\alpha)$ for new $\alpha'$, and $S' = \mathcal{M}(S\Gamma, e_2, S\alpha')$. We want to show that
+\[S'S\Gamma \vdash e_1 : S'S\alpha' \rightarrow S'S\alpha \:\wedge\: S'S\Gamma \vdash e_2 : S'S\alpha' \] so we can infer that $S'
+S\Gamma \vdash e_1 \: e_2 : S'S\alpha$.
+
+To show this, note that by the inductive assumption $S\Gamma \vdash e_1 : S\alpha' \rightarrow S\alpha$ and $S'S\Gamma \vdash e_2 : S'S\alpha'$. So it only remains to show that $S'S\Gamma \vdash e_1 : S'S\alpha' \rightarrow S'S\alpha$. This comes from the fact that $\Gamma \vdash e : \tau \Rightarrow S\Gamma \vdash e : S\tau$. Applying this to $S\Gamma \vdash e_1 : S\alpha' \rightarrow S\alpha$, we have the desired conclusion.
+
+We can show that $\Gamma \vdash e : \tau \Rightarrow S\Gamma \vdash e : S\tau$ by noting the type inference rules still hold when applying the same substitution $S$ to $\Gamma$ and the inferred types.
+
+\item[Case 5.] $e = e_1 + e_2$
+
+By the definition of the algorithm, $\mathcal{M}(\Gamma, e, \alpha) = S''S'S$, when $S = \mathsf{unify}(\iota, \alpha) = \{\alpha\mapsto\iota\}$, $S' = \mathcal{M}(S\Gamma, e_1, \iota)$, and $S'' = \mathcal{M}(S'S\Gamma, e_2, \iota)$. We want to show that
+\[S''S'S\Gamma \vdash e_1 : \iota \:\wedge\: S''S'S\Gamma \vdash e_2 : \iota \] so we can infer that $S''S'
+S\Gamma \vdash e_1 + e_2 : \iota = S''S'\iota = S''S'S\alpha$.
+
+To show this, note that by the inductive assumption $S'S\Gamma \vdash e_1 : S'\iota = \iota$ and $S''S'S\Gamma \vdash e_2 : S''\iota = \iota$. $S''S'S\Gamma \vdash e_1 : \iota$ can be shown by applying $S''$ to $S'S\Gamma \vdash e_1 : \iota$, so we have the desired conclusion.
+\end{description}
+\end{proof}
+
+\begin{clm}$\mathsf{(Completeness \: of\:} \mathcal{M}\mathsf{)}$
+$S\Gamma \vdash e : S\alpha \Rightarrow \exists Q, R, S' : \mathcal{M}(\Gamma, e, \alpha) = S' \:\wedge\: SQ = RS'$, when $Q$ only substitutes new type variables used by the $\mathcal{M}$ algorithm into types available in $\Gamma$.
+
+That is, the $\mathcal{M}$ algorithm always gives the most general unifier if there is a solution.
+\end{clm}
+\begin{proof}
+We use structural induction on $e$.
+
+\begin{description}
+\item[Case 1.] (Base case) $e = n$
+
+By the type inference rule $\mathsf{Integer}$, $S\alpha = \iota = S\iota$. Then since there is a unifier for $\alpha$ and $\iota$, the unification algorithm provides the most general unifier $S'$ so $S=RS'$ for some $R$. The $\mathcal{M}$ algorithm also provides the same unifier, since by the definition of the $\mathcal{M}$ algorithm, $\mathcal{M}(\Gamma, n, \alpha) = \mathsf{unify}(\alpha, \iota)$.
+
+\item[Case 2.] (Base case) $e = x$
+
+By the type inference rule $\mathsf{Variable}$, $S\alpha = S\Gamma(x)$. This means that there is an entry for $x$ in $\Gamma$ as $x : \tau$, and $S\alpha = S\tau$. Then since there is a unifier for $\alpha$ and $\tau$, the unification algorithm provides the most general unifier $S'$ so $S=RS'$ for some $R$. The $\mathcal{M}$ algorithm also provides the same unifier, since by the definition of the $\mathcal{M}$ algorithm, $\mathcal{M}(\Gamma, x, \alpha) = \mathsf{unify}(\alpha, \tau)$.
+
+\item[Case 3.] $e = \lambda x.e'$
+
+By the type inference rule $\mathsf{Function}$, $S\alpha = \tau_1 \rightarrow \tau_2$, when $S\Gamma + x : \tau_1 \vdash e' : \tau_2$. Then we can let $\alpha_1$ and $\alpha_2$ be new type variables and $P := \{\alpha_1\mapsto\tau_1,\:\alpha_2\mapsto\tau_2\}$, so that 
+
+\begin{equation}
+SP\alpha = SP(\alpha_1\rightarrow\alpha_2)
+\end{equation}
+\begin{equation}
+SP\Gamma + x : SP\alpha_1 \vdash e' : SP\alpha_2
+\end{equation}
+
+By equation (1), since $SP$ is a unifier for $\alpha$ and $\alpha_1\rightarrow\alpha_2$, there exists a $R$ such that $SP = RS'$, when \[S'=\mathsf{unify}(\alpha, \alpha_1\rightarrow\alpha_2)\] Then equation (2) turns into $RS'\Gamma + x : RS'\alpha_1 \vdash e' : RS'\alpha_2$, meaning that $R$ is a substitution that makes $e'$ be of the type $S'\alpha_2$ under $S'\Gamma + x : S'\alpha_1$. 
+
+By the inductive assumption, \[S'' = \mathcal{M}(S'\Gamma + x : S'\alpha_1, e', S'\alpha_2)\] exists, and there exists a $Q$ substituting new type variables used in $S''$ and a substitution $R'$ so that $RQ = R'S''$. Note that since $Q$ maps new type variables used in $S''$ to types in $S'\Gamma + x : S'\alpha_1$, $S'Q\tau = Q\tau =  QS'\tau$ if $\tau$ is a new type variable($\because Q\tau$ is a type seen in $S'\Gamma + x : S'\alpha$, so $S'$ has no effect) and $S'Q\tau = S'\tau = QS'\tau$ otherwise($\because Q$ has no effect). Then
+
+\begin{align}
+    SPQ &= RS'Q &(\because SP = RS')\nonumber\\
+        &= RQS' &(\because QS' = S'Q)\nonumber\\
+        &= R'S''S' &(\because RQ = R'S'')\nonumber
+\end{align}
+
+Note that $S''S' = \mathcal{M}(\Gamma, \lambda x.e', \alpha)$ by definition. Thus we have proven that \[S(PQ) = R'(\mathcal{M}(\Gamma, \lambda x.e', \alpha))\]when $PQ$ maps new type variables used in the $\mathcal{M}$ algorithm($P$ maps new $\alpha_1$, $\alpha_2$, and $Q$ maps new variables used when solving for $e'$).
+
+\item[Case 4.] $e = e_1 \: e_2$
+
+By the type inference rule $\mathsf{Application}$, there exists a type $\tau$ such that $S\Gamma \vdash e_1 : \tau \rightarrow S\alpha \:\wedge\: S\Gamma \vdash e_2 : \tau$. We can let $\alpha'$ be a new type variable and $P := \{\alpha'\mapsto\tau\}$, so that
+
+\begin{equation}
+    SP\Gamma \vdash e_1 : SP\alpha' \rightarrow SP\alpha
+\end{equation}
+\begin{equation}
+    SP\Gamma \vdash e_2 : SP\alpha'
+\end{equation}
+
+By the inductive assumption, equation (3) leads to the existence of $Q, R$ such that $SPQ = RS'$, when \[S'=\mathcal{M}(\Gamma, e_1, \alpha'\rightarrow\alpha)\] Then since $Q$ has no effect on $\Gamma$ nor $\alpha'$, equation (4) is equivalent to $SPQ\Gamma \vdash e_2 : SPQ\alpha'$, which is $RS'\Gamma \vdash e_2 : RS'\alpha'$. Again, by the inductive assumption, this leads to the existence of $Q', R'$ such that $RQ' = R'S''$, when \[S'' = \mathcal{M}(S'\Gamma, e_2, S'\alpha')\]
+
+Now we can show that
+\begin{align}
+    SPQQ' &= RS'Q' &(\because SPQ = RS')\nonumber\\
+        &= RQ'S' &(\because S'Q' = Q'S')\nonumber\\
+        &= R'S''S' &(\because RQ' = R'S'')\nonumber
+\end{align}
+
+Note that $S''S' = \mathcal{M}(\Gamma, e_1 \: e_2, \alpha)$ by definition. Thus we have proven that \[S(PQQ') = R'\mathcal{M}(\Gamma, e_1 \: e_2, \alpha)\] when $PQQ'$ maps new type variables used in the $\mathcal{M}$ algorithm($P$ maps new $\alpha'$, $Q$ maps new variables used when solving for $e_1$, and $Q'$ maps new variables used when solving for $e_2$).
+
+\item[Case 5.] $e = e_1 + e_2$
+
+By the type inference rule $\mathsf{Addition}$, $S\alpha = \iota$, when 
+\begin{equation} 
+    S\Gamma \vdash e_1 : \iota
+\end{equation}
+\begin{equation}
+    S\Gamma \vdash e_2 : \iota
+\end{equation}
+
+First of all, $S$ is a unifier of $\alpha$ and $\iota$, so there exists a $R$ that satisfies $S = RS'$, when $S'$ is the most general unifier of $\alpha$ and $\iota$ as given by the unification algorithm \[S' = \mathsf{unify}(\alpha, \iota)\] By the inductive assumption, equation (5) leads to the existence of $Q, R'$ such that $RQ = R'S''$, when \[S'' = \mathcal{M}(S\Gamma, e_1, \iota)\] Then since $Q$ has no effect on $\Gamma$, equation (6) is equivalent to $RQS'\Gamma \vdash e_2 : \iota$, which is $R'S''S'\Gamma \vdash e_2 : \iota$. Again, by the inductive assumption, this leads to the existence of $Q', R''$ such that $R'Q' = R''S'''$, when \[S''' = \mathcal{M}(S'S\Gamma, e_2, \iota)\]
+
+Now we can show that
+\begin{align}
+    SQQ' &= RS'QQ' &(\because S = RS')\nonumber\\
+        &= RQS'Q' &(\because S'Q = QS')\nonumber\\
+        &= R'S''S'Q' &(\because RQ = R'S'')\nonumber\\
+        &= R'Q'S''S' &(\because (S''S')Q' = Q'(S''S'))\nonumber\\
+        &= R''S'''S''S' &(\because R'Q' = R''S''')\nonumber
+\end{align}
+
+Note that $S'''S''S' = \mathcal{M}(\Gamma, e_1 + e_2, \alpha)$ by definition. Thus we have proven that \[S(QQ') = R'\mathcal{M}(\Gamma, e_1 + e_2, \alpha)\] when $QQ'$ maps new type variables used in the $\mathcal{M}$ algorithm($Q$ maps new variables used when solving for $e_1$, and $Q'$ maps new variables used when solving for $e_2$).
+
+\end{description}
+\end{proof}
+
+\section{Problem 3: Imperative Factorial}
+\begin{figure}[htb]
+\centering
+\begin{BVerbatim}
+fn n =>
+  (let val l = malloc n in
+    let val acc = malloc 1 in
+      let val temp = malloc (fn x => x) in
+        let val w = (fn x => 
+                      if !l = 0 then !acc
+                      else (acc := (* !acc !l); l := !l - 1; (!temp) 1)) in
+          temp := w; w 1
+        end
+      end
+    end
+  end)
+\end{BVerbatim}
+\caption{The factorial function in the M language from class.}
+\end{figure}
+
+The above is the factorial function written in the M language in class without using the \texttt{rec} construct defined specially for recursive functions. The above function was type checked by the simple type checker to be of the type \texttt{int -> int}.
+
+The idea is that the \texttt{while} loop has no way to \texttt{goto} the front of the loop, so to simulate the program counter, a memory location(\texttt{temp}) is used to store the front of the loop. Note that the parameter for \texttt{w} is a dummy.
+
+\begin{figure}[htb]
+\centering
+\begin{BVerbatim}
+e1 ; e2 <=> (\x.e2)e1 (x free in e2)
+\end{BVerbatim}
+
+\begin{BVerbatim}
+let x = e1 in e2 <=> (\x.e2)e1
+\end{BVerbatim}
+\caption{How to define the sequential operator and the let expression.}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\begin{BVerbatim}
+(* n m) <=> 
+  (let val l = malloc n in
+    let val acc = malloc 0 in
+      let val temp = malloc (fn x => x) in
+        let val w = (fn x => 
+                      if !l = 0 then !acc
+                      else (acc := !acc + m; l := !l - 1; (!temp) 1)) in
+          temp := w; w 1
+        end
+      end
+    end
+  end)
+\end{BVerbatim}
+\caption{How to define the multiplication operator for two non-negative integers $n$, $m$.}
+\end{figure}
+
+Using the above translations to translate the M language to the toy language defined for this problem, the factorial function can be safely checked.
+
+\section{Problem 6: Hansel and Gretel}
+\begin{figure}[htb]
+\centering
+\begin{BVerbatim}
+/* 
+ * node : {visitBit : bool, next : {ptr : node pointer, flipBit : bool}(s)}
+ * Note that there may be multiple "next fields"
+ * mark(c, p) marks every node reachable from current node c and previous node p
+ */
+mark(c, p) =
+    c->visitBit = 1
+    if moreToVisit then 
+        /* if there exists an unvisited and unflipped pointer from c */
+        let c->next be an unflipped pointer whose target is not visited
+            tmp = (c->next).ptr
+            (c->next).ptr = p
+            (c->next).flipBit = 1
+            mark(tmp, c)
+    else if moreToGoBack then
+        /* if there exists a flipped pointer from p */
+        let p->next be a flipped pointer
+            tmp = (p->next).ptr
+            (p->next).ptr = c
+            (p->next).flipBit = 0
+            mark(p, tmp)
+    else return
+\end{BVerbatim}
+\caption{Pseudocode for marking accessible memory locations. Initially called with \texttt{mark(root, null)}.}
+\end{figure}
+
+We can prove the validity of this algorithm by induction on the number of nodes to be marked\cite{TAOCP}. The proof depends on the fact that during the execution of \texttt{mark(root, null)}, when \texttt{mark(c, p)} is called, the flipped pointers in the graph form a straight path from \texttt{p} to \texttt{root}. 
+
+This is proven by induction on the depth of the call stack. The base case is \texttt{mark(root, null)}, and when \texttt{mark(c, p)} is called from \texttt{mark(c', p')}, either a flipped pointer is added from \texttt{p}(= \texttt{c'}) to \texttt{p'} or a flipped pointer from \texttt{c}(= \texttt{p'}) to \texttt{p} is unflipped. Either way, the inductive assumption is that the flipped pointers formed a path from \texttt{p'} to \texttt{root}, and the newly flipped/unflipped pointer results in the flipped pointers forming a path from \texttt{p} to \texttt{root}.
+
+Now note that \texttt{mark} eventually reaches a leaf node \texttt{c} with no \texttt{next} fields($\because$ finite graph). When \texttt{c} is marked and calls \texttt{mark(p, tmp)}, the situation is equal to when \texttt{mark} is called on the graph without \texttt{c}. More accurately, the flipped pointers are exactly the same when \texttt{mark(p, tmp)} is called for the graph without \texttt{c}, since it is the path from \texttt{tmp} to \texttt{root}. Since in this situation all pointers from and to \texttt{c} cannot be flipped($\because$\texttt{c} has already been visited), by the inductive assumption the rest of the algorithm proceeds successfully as if \texttt{c} has been removed.
+\printbibliography
+\end{document}
